@@ -7,5 +7,3 @@ cumdisy <- cumsum(disy);
 cumdisz <- cumsum(disz);
 norm <- sqrt(cumdisx^2 + cumdisy^2 + cumdisz^2);
 plot(norm, type="l", main="Bessel process of 3d Wiener process", xlab="time", ylab="norm");
-
-
