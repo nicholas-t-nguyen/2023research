@@ -8,7 +8,7 @@ def d_h_dt(t, h):
 
 
 h0_values = [-2, -1.5, -1, -0.5, 0.5, 1, 1.5, 2]  # You can customize this list with the values of x you want to test
-stop = 10
+stop = 50
 t_span = [0, stop]
 t_eval = np.linspace(0, stop, 1000)
 
