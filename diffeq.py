@@ -8,13 +8,14 @@ def d_h_dt(t, h):
 
 
 h0_values = [-2, -1.5, -1, -0.5, 0.5, 1, 1.5, 2]  # You can customize this list with the values of x you want to test
-
-t_eval = np.linspace(0, 10, 50000)
+stop = 10
+t_span = [0, stop]
+t_eval = np.linspace(0, stop, 1000)
 
 plt.figure(figsize=(8, 6))
 
 for h0 in h0_values:
-    sol = solve_ivp(d_h_dt, [0, 10], [h0], t_eval=t_eval)
+    sol = solve_ivp(d_h_dt, t_span=t_span, y0=[h0], t_eval=t_eval)
 
     plt.plot(sol.t, sol.y[0], label=f'x={h0}')
 
