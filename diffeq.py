@@ -2,26 +2,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import solve_ivp
 
-
-def d_h_dt(t, h):
-    return (1 / 2) * (((-2) / (h - (np.sqrt(t)))) + ((-2) / (h  + (np.sqrt(t)))))
-
-
-h0_values = [-2, -1.5, -1, -0.5, 0.5, 1, 1.5, 2]  # You can customize this list with the values of x you want to test
-stop = 50
-t_span = [0, stop]
-t_eval = np.linspace(0, stop, 1000)
-
-plt.figure(figsize=(8, 6))
-
-for h0 in h0_values:
-    sol = solve_ivp(d_h_dt, t_span=t_span, y0=[h0], t_eval=t_eval)
-
-    plt.plot(sol.t, sol.y[0], label=f'x={h0}')
-
-plt.xlabel('t')
-plt.ylabel('h(t)')
-plt.title('Solution of dh/dt for different x at t=0')
-plt.savefig('1.png')
-plt.show()
-
+def solve_diffeq(t, steps, h0_values, lambda1, lambda2):
+    def dh_dt(t, h, lambda1, lambda2):
+        return (1 / 2) * (((-2) / (h - (lambda1(t)))) + ((-2) / (h + (lambda2(t)))))
+    t_span = [0, t]
+    t_eval = np.linspace(0, t, steps)
+    for h0 in h0_values:
+        sol = solve_ivp(dh_dt, t_span=t_span, y0=[h0], t_eval=t_eval, args=(lambda1, lambda2))
+        plt.plot(sol.t, sol.y[0], label=f'x={h0}')
+    return sol

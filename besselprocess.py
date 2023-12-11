@@ -1,7 +1,7 @@
 import numpy as np
 
-def brownian_motion(dimensions, steps, T):
-    sd = np.sqrt(T / steps)
+def brownian_motion(dimensions, t, steps):
+    sd = np.sqrt(t / steps)
     array = np.random.normal(0, sd, steps)
     for i in (range(dimensions - 1)):
         temp = np.random.normal(0, sd, steps)
@@ -9,5 +9,5 @@ def brownian_motion(dimensions, steps, T):
     cumsumarray = np.cumsum(array, axis=1)
     return cumsumarray
 
-def bessel_process(dimensions, steps, T):
-    return np.linalg.norm(brownian_motion(dimensions, steps, T), axis=0)
+def bessel_process(dimensions, steps, t):
+    return np.linalg.norm(brownian_motion(dimensions, steps, t), axis=0)
