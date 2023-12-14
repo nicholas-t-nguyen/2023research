@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.integrate import solve_ivp
 
+def dh_dt(t, h, lambda1, lambda2):
+    return (1 / 2) * (((-2) / (h - (lambda1(t)))) + ((-2) / (h + (lambda2(t)))))
 def solve_diffeq(t, steps, h0_values, lambda1, lambda2):
-    def dh_dt(t, h, lambda1, lambda2):
-        return (1 / 2) * (((-2) / (h - (lambda1(t)))) + ((-2) / (h + (lambda2(t)))))
     t_span = [0, t]
     t_eval = np.linspace(0, t, steps)
     for h0 in h0_values:
