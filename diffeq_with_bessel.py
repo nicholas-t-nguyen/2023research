@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.interpolate import interp1d
-from besselprocess import bessel_process
+from stochastic import bessel_process
 from diffeq import solve_diffeq
 def diffeq_bessel(num_simulations, t, steps, h0_values):
     t_eval = np.linspace(0, t, steps)
