@@ -12,3 +12,4 @@ test4.py
 diffeq_run.py
 stochastic_test.py
 diffeq_with_stochastic_test.py
+stochastic_test.py
