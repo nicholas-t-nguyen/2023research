@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from diffeq import solve_diffeq
 
-h0 = [10]
-steps = 10000
+h0 = [100, 10, 50]
+steps = 1000
 t = 100
 
 lambda1 = lambda t: t
@@ -16,5 +16,5 @@ plt.plot(sol.t, sol.y[0])
 plt.xlabel('t')
 plt.ylabel('h(t)')
 plt.title('Solution of dh/dt for different x at t=0')
-plt.savefig('1.png')
+#plt.savefig('1.png')
 plt.show()
