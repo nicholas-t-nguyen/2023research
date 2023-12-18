@@ -3,12 +3,7 @@
 .RData
 .Ruserdata
 venv
-test.py
-test2.py
-test3.py
-test4.py
+test scripts
 .idea
 1.png
-diffeq_run.py
-stochastic_test.py
-diffeq_with_stochastic_test.py
+
