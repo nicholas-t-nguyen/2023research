@@ -13,6 +13,7 @@ def diffeq_random_walk(t, steps, h0):
 
     sol = solve_diffeq(t, steps, h0, lambda1, lambda2)
     return sol
+
 def diffeq_brownian_motion(t, steps, h0):
     t_eval = np.linspace(0, t, steps + 1)
     b1 = brownian_motion(t, steps)
