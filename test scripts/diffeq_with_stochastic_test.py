@@ -3,8 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-t = 100
-steps = 1000
+t = 33
+steps = 100
 t_eval = np.linspace(0, t, steps + 1)
 
 plt.figure(figsize=(8, 6))

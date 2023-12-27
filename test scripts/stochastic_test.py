@@ -5,26 +5,17 @@ from multiprocessing import Process
 
 plt.figure(figsize=(8, 6))
 
-def func():
-    x = random_walk(100000000,100000000)
-    y = random_walk(100000000,100000000)
+t = 10
+steps = 100
+x = random_walk(t ,steps)
+y = random_walk(t ,steps)
 
-    t = np.linspace(0, 100000000, 100000001)
+t = np.linspace(0, t, steps + 1)
 
-    plt.plot(t, y)
-    plt.xlim(0)
-    plt.xlabel('t')
-    plt.ylabel('Bt')
+plt.plot(t, y)
+plt.xlim(0)
+plt.xlabel('t')
+plt.ylabel('Bt')
 
-    plt.show()
+plt.show()
 
-if __name__ == '__main__':
-    times = 10
-    processes = []
-    for _ in range(times):
-        p = Process(target=func)
-        p.start()
-        processes.append(p)
-
-    for p in processes:
-        p.join()
