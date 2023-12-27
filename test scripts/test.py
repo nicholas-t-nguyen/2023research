@@ -37,5 +37,5 @@ plot1()
 
 ##semi martingale one curve case
 
-
+##
 #multiple starting points
