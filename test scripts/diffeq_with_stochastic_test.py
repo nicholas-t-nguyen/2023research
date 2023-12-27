@@ -9,7 +9,7 @@ t_eval = np.linspace(0, t, steps + 1)
 
 plt.figure(figsize=(8, 6))
 
-sol = diffeq_random_walk(t, steps, [10])
+sol = diffeq_random_walk(t, steps, 10)
 plt.plot(sol.t, sol.y[0])
 
 plt.xlabel('t')
