@@ -1,4 +1,4 @@
-from diffeq_with_stochastic import diffeq_random_walk, diffeq_brownian_motion
+from diffeq_with_stochastic import solve_diffeq_random_walk, solve_diffeq_brownian_motion
 import numpy as np
 from matplotlib import pyplot as plt
 import multiprocessing as mp
@@ -10,7 +10,7 @@ t_eval = np.linspace(0, t, steps + 1)
 def func():
     plt.figure(figsize=(8, 6))
 
-    sol = diffeq_random_walk(t, steps, 10)
+    sol = solve_diffeq_random_walk(t, steps, 10)
     plt.plot(sol.t, sol.y[0])
 
     plt.xlabel('t')

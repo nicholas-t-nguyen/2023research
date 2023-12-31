@@ -1,15 +1,16 @@
-from diffeq_with_stochastic import solve_diffeq_random_walk, solve_diffeq_brownian_motion
+from one_curve_case import solve_diffeq_scaled
 import numpy as np
 from matplotlib import pyplot as plt
 
-
-t = 33
+t = 10
 steps = 100
 t_eval = np.linspace(0, t, steps + 1)
+kappa = 1
+alpha = 1
 
 plt.figure(figsize=(8, 6))
 
-sol = solve_diffeq_random_walk(t, steps, 10)
+sol = solve_diffeq_scaled(t, steps, 1 , kappa, alpha)
 plt.plot(sol.t, sol.y[0])
 
 plt.xlabel('t')
