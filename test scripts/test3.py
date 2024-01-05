@@ -1,48 +1,50 @@
-import math
-import matplotlib.pyplot as plt
 import numpy as np
-from sympy import latex, symbols, sqrt
 import os
-from diffeq import solve_diffeq
+import multiprocessing as mp
+import matplotlib.pyplot as plt
+from scipy.interpolate import interp1d
+from one_curve_case import solve_diffeq_scaled
+from stochastic import brownian_motion
 
-h0_values = [0.1]
-steps = 1000
-t = 1
+def get_color(i, total):
+    cmap = plt.get_cmap('hsv')
+    return cmap(i / total)
+def plot(plotnum):
+    print(f'{plotnum} starting')
+    np.random.seed()
+    t = 1000
+    steps = 10000
+    h0 = 10
+    kappa = 1
+    alpha = 1
+    t_eval = np.linspace(0, t, steps + 1)
 
+    plt.figure(figsize=(10, 8))
 
-lambda1 = lambda t: t
-lambda2 = lambda t: sqrt(t)
+    bmv = brownian_motion(t, steps)
+    bm = interp1d(x=t_eval, y=bmv)
+    plt.plot(t_eval, bmv, label="Brownian motion", color='brown')
 
-for h0 in h0_values:
-    plt.figure(figsize=(8, 6))
+    range_alpha = np.linspace(0, 1, 11)
 
-    # Assuming you have a correct implementation of solve_diffeq
+    for i in range(len(range_alpha)):
+        sol = solve_diffeq_scaled(t, steps, h0, kappa, bm, range_alpha[i])
+        color = get_color(i, len(range_alpha))
+        plt.plot(sol.t, sol.y[0], label=f'α={range_alpha[i]}', color=color)
 
-    sol = solve_diffeq(t, steps, h0, lambda1, lambda2)
+    box = plt.gca().get_position()
+    plt.gca().set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
-    plt.plot(sol.t, sol.y[0], label=f'x={h0}')
-    t_sym, x = symbols('t x')
-    lambda1_str = str(lambda1(t_sym)).replace('**', '^')
-    lambda1_latex = latex(lambda1(t_sym))
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
-    plt.xlabel('t')
-    plt.ylabel('h(t)')
+    plt.title(f"Single curve case plot of multiple alpha at h0 = {h0}")
 
-    # Set y-axis limits
-   #  plt.ylim(-.001, .001)
+    plt.savefig(f'1cc/alpha{plotnum}.png')
 
-    title = f'Solution of $\\frac{{dh}}{{dt}}$ for $h(t_0) = {h0}$ at $t=0$ with $\\lambda_{{1,2}}(t) = {lambda1_latex}$'
+    print(f'{plotnum} done')
 
-    plt.title(title)
-    plt.show()
-
-"""
-    file_path = f'plots/deterministic/e^t/{lambda1_str}/x={h0}.png'
-    directory = os.path.dirname(file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-    plt.savefig(file_path)  # Save the plot with the modified expression
-   """
-
-
+if __name__ == "__main__":
+    pool = mp.Pool(processes=2)
+    pool.map(plot, range(1,6))
+    pool.close()
+    pool.join()

@@ -3,7 +3,7 @@ from scipy.interpolate import interp1d
 from diffeq import solve_diffeq
 from stochastic import random_walk, brownian_motion
 from matplotlib import pyplot as plt
-from diffeq_with_stochastic import solve_diffeq_random_walk
+from diffeq_with_stochastic import diffeq_random_walk
 
 h0 = 10
 t = 33
