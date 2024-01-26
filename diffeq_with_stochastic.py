@@ -4,7 +4,8 @@ from diffeq import solve_diffeq
 from stochastic import random_walk, brownian_motion
 
 def solve_diffeq_random_walk(t, steps, h0):
-    t_eval = np.linspace(0, t, steps + 1)
+    ss = t/steps
+    t_eval = np.arange(0, t + ss, ss)
     rw1 = random_walk(t, steps)
     lambda1 = interp1d(x=t_eval, y=rw1)
 
@@ -15,7 +16,8 @@ def solve_diffeq_random_walk(t, steps, h0):
     return sol
 
 def solve_diffeq_brownian_motion(t, steps, h0):
-    t_eval = np.linspace(0, t, steps + 1)
+    ss = t/steps
+    t_eval = np.arange(0, t + ss, ss)
     b1 = brownian_motion(t, steps)
     lambda1 = interp1d(x=t_eval, y=b1)
 

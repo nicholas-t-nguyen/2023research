@@ -15,7 +15,7 @@ def plot(plotnum):
     t = 100
     steps = 1000
     h0 = 10
-    kappa = 1
+    kappa = 0
     alpha = 0
     t_eval = np.linspace(0, t, steps + 1)
 
@@ -39,7 +39,7 @@ def plot(plotnum):
 
     plt.title(f"Single curve case plot of multiple kappa at h0 = {h0}")
 
-    plt.savefig(f'1cc/multkappa{plotnum}.png')
+    plt.savefig(f'1cc/multikappa{plotnum}alpha{alpha}.png')
 
     print(f'{plotnum} done')
 

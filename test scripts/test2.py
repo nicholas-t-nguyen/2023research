@@ -1,25 +1,47 @@
-from diffeq_with_stochastic import solve_diffeq_random_walk, solve_diffeq_brownian_motion
+import numpy
+
+from one_curve_case import solve_diffeq_scaled
 import numpy as np
 from matplotlib import pyplot as plt
-import multiprocessing as mp
+from stochastic import brownian_motion
+from scipy.interpolate import interp1d
+from scipy.optimize import brentq as root
 
 t = 100
 steps = 1000
-t_eval = np.linspace(0, t, steps + 1)
+ss = t/steps
+t_eval = np.arange(0, t+ss, ss)
+kappa = 1
+alpha = 1
 
-def func():
-    plt.figure(figsize=(8, 6))
+fun = lambda x: x
 
-    sol = solve_diffeq_random_walk(t, steps, 10)
-    plt.plot(sol.t, sol.y[0])
+plt.figure(figsize=(8, 6))
 
-    plt.xlabel('t')
-    plt.ylabel('Bt')
+x = []
+y= []
+
+#bmv = brownian_motion(t, steps)
+#bm = interp1d(t_eval, bmv)
+for alpha in numpy.linspace(0, 10, 1001):
+    sol = solve_diffeq_scaled(t, steps, 10, kappa, fun, alpha)
+    solinterp = interp1d(t_eval, sol.y[0])
+
+    lambdafun = lambda t, alpha=alpha: np.sqrt(kappa) * fun(t) + alpha * t
+    rootfun = lambda t, alpha=alpha: lambdafun(t) - solinterp(t)
+
+    fht = root(rootfun, a=0, b=50)
+    x.append(fht)
+    y.append(fun(fht))
 
     plt.show()
-if __name__ == '__main__':
-    mp.Process(target=func).start()
-    mp.Process(target=func).start()
-    mp.Process(target=func).start()
-    mp.Process(target=func).start()
-    mp.Process(target=func).start()
+
+#plt.plot(sol.t, sol.y[0])
+#plt.plot(t_eval, [fun(t) for t in t_eval], color='brown')
+plt.scatter(x, y, color='red')
+
+plt.xlabel('t')
+plt.ylabel('fht')
+
+plt.show()
+#plt.savefig("fht/x.png")

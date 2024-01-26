@@ -15,7 +15,7 @@ plt.figure(figsize=(8, 6))
 bmv = brownian_motion(t, steps)
 bm = interp1d(t_eval, bmv)
 
-sol = solve_diffeq_scaled(t, steps, 10 , kappa, bm, alpha)
+sol = solve_diffeq_scaled(t, steps, 10, kappa, bm, alpha)
 plt.plot(sol.t, sol.y[0])
 
 plt.xlabel('t')
