@@ -1,50 +1,41 @@
+from firsthittingtime import fht1cc
 import numpy as np
-import os
-import multiprocessing as mp
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
-from one_curve_case import solve_diffeq_scaled
-from stochastic import brownian_motion
+from scipy.integrate import solve_ivp
+import multiprocessing
+import inspect
+import csv
 
-def get_color(i, total):
-    cmap = plt.get_cmap('hsv')
-    return cmap(i / total)
-def plot(plotnum):
-    print(f'{plotnum} starting')
-    np.random.seed()
-    t = 100
-    steps = 1000
-    h0 = 10
-    kappa = 0
-    alpha = 0
-    t_eval = np.linspace(0, t, steps + 1)
+def dh_dt_zerodriver(t, h):
+    return -2 / h
 
-    plt.figure(figsize=(10, 8))
+t = 6.25
+steps = 100
+dt = t / steps
+t_span = [0, t]
+t_eval = np.arange(0, t + dt, dt)
 
-    bmv = brownian_motion(t, steps)
-    bm = interp1d(x=t_eval, y=bmv)
-    plt.plot(t_eval, bmv, label="Brownian motion", color='brown')
+h0 = 5
 
-    range_kappa = np.linspace(0, 1, 11)
+sol = solve_ivp(dh_dt_zerodriver, t_span=t_span, y0=[h0], t_eval=t_eval)
+interp = interp1d(t_eval, sol.y[0])
+print(interp(6.25))
+print(len(t_eval))
+print(sol.y[0])
 
-    for i in range(len(range_kappa)):
-        sol = solve_diffeq_scaled(t, steps, h0, range_kappa[i], bm, alpha)
-        color = get_color(i, len(range_kappa))
-        plt.plot(sol.t, sol.y[0], label=f'κ={range_kappa[i]}', color=color)
+plt.figure(figsize=(8, 6), dpi=400)
 
-    box = plt.gca().get_position()
-    plt.gca().set_position([box.x0, box.y0, box.width * 0.8, box.height])
+zerodriver = lambda t: 0 * t
 
-    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+solinterp = interp1d(t_eval, sol.y[0])
+fhtv, fhtl = fht1cc(solinterp, zerodriver, t, dt)
 
-    plt.title(f"Single curve case plot of multiple kappa at h0 = {h0}")
-
-    plt.savefig(f'1cc/multikappa{plotnum}alpha{alpha}.png')
-
-    print(f'{plotnum} done')
-
-if __name__ == "__main__":
-    pool = mp.Pool(processes=2)
-    pool.map(plot, range(1,6))
-    pool.close()
-    pool.join()
+plt.plot(t_eval, [solinterp(t) for t in t_eval], color='black')
+plt.plot(t_eval, [zerodriver(t) for t in t_eval], color='gold')
+plt.scatter(fhtv, solinterp(fhtv), color='blue')
+# plt.xlim((fhtv-0.1, fhtv+0.1))
+# plt.ylim((solinterp(fhtv)-1, solinterp(fhtv)+1))
+print(fhtv)
+plt.show()
+plt.close()

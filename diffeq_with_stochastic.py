@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.interpolate import interp1d
-from diffeq import solve_diffeq_two_curve
+from diffeq import solve_diffeq_2cc
 from stochastic import random_walk, brownian_motion
 
 def solve_diffeq_random_walk(t, steps, h0):
@@ -12,7 +12,7 @@ def solve_diffeq_random_walk(t, steps, h0):
     rw2 = random_walk(t, steps)
     lambda2 = interp1d(x=t_eval, y=rw2)
 
-    sol = solve_diffeq_two_curve(t, steps, h0, lambda1, lambda2)
+    sol = solve_diffeq_2cc(t, steps, h0, lambda1, lambda2)
     return sol
 
 def solve_diffeq_brownian_motion(t, steps, h0):
@@ -24,7 +24,7 @@ def solve_diffeq_brownian_motion(t, steps, h0):
     b2 = brownian_motion(t, steps)
     lambda2 = interp1d(x=t_eval, y=b2)
 
-    sol = solve_diffeq_two_curve(t, steps, h0, lambda1, lambda2)
+    sol = solve_diffeq_2cc(t, steps, h0, lambda1, lambda2)
     return sol
 
 

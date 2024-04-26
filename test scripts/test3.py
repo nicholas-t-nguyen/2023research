@@ -1,50 +1,62 @@
+import numpy
+from diffeq import solve_diffeq_three_curve
 import numpy as np
-import os
-import multiprocessing as mp
-import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
-from one_curve_case import solve_diffeq_scaled
+from matplotlib import pyplot as plt
 from stochastic import brownian_motion
+from scipy.interpolate import interp1d
+from scipy.optimize import brentq as root
+from PIL import Image, ImageDraw
 
-def get_color(i, total):
-    cmap = plt.get_cmap('hsv')
-    return cmap(i / total)
-def plot(plotnum):
-    print(f'{plotnum} starting')
-    np.random.seed()
-    t = 1000
-    steps = 10000
-    h0 = 10
-    kappa = 1
-    alpha = 1
-    t_eval = np.linspace(0, t, steps + 1)
+t = 10
+steps = 100000
+ss = t/steps
+t_eval = np.arange(0, t+ss, ss)
+kappa = 1
+alpha = 1
+harr = [5]
+h0 = 5.1
 
-    plt.figure(figsize=(10, 8))
+lambda1 = lambda x: -x
+lambda2 = lambda x: np.sqrt(x) + 2
+lambda3 = lambda x: x + 1
 
-    bmv = brownian_motion(t, steps)
-    bm = interp1d(x=t_eval, y=bmv)
-    plt.plot(t_eval, bmv, label="Brownian motion", color='brown')
+#bmv = brownian_motion(t, steps)
+#bm = interp1d(t_eval, bmv)
 
-    range_alpha = np.linspace(0, 1, 11)
+plt.figure(figsize=(8, 6), dpi=400)
+x = []
+y = []
 
-    for i in range(len(range_alpha)):
-        sol = solve_diffeq_scaled(t, steps, h0, kappa, bm, range_alpha[i])
-        color = get_color(i, len(range_alpha))
-        plt.plot(sol.t, sol.y[0], label=f'α={range_alpha[i]}', color=color)
+for h0 in harr:
+    sol = solve_diffeq_three_curve(t, steps, h0, lambda1, lambda2, lambda3)
+    solinterp = interp1d(t_eval, sol.y[0])
 
-    box = plt.gca().get_position()
-    plt.gca().set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    rootfun2 = lambda t: lambda2(t) - solinterp(t)
 
-    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    fht = root(rootfun2, a=0, b=3.7)
+    print(fht)
+    x.append(fht)
+    y.append(lambda2(fht))
 
-    plt.title(f"Single curve case plot of multiple alpha at h0 = {h0}")
+    plt.plot(sol.t, sol.y[0], color='black')
+    plt.scatter(x, y)
 
-    plt.savefig(f'1cc/alpha{plotnum}.png')
+plt.plot(t_eval, [lambda1(t) for t in t_eval], color='red')
+plt.plot(t_eval, [lambda2(t) for t in t_eval], color='green')
+plt.plot(t_eval, [lambda3(t) for t in t_eval], color='blue')
 
-    print(f'{plotnum} done')
 
-if __name__ == "__main__":
-    pool = mp.Pool(processes=2)
-    pool.map(plot, range(1,6))
-    pool.close()
-    pool.join()
+#plt.scatter(x, y)
+
+plt.xlabel(f'test')
+plt.ylabel('x value of fht')
+
+#plt.xlim(0, 100)
+#plt.ylim(6, 14.5)
+
+img_filename = f"fht/fhtgif/frame_{kappa:.2f}.png"
+plt.show()
+plt.close()
+
+
+
