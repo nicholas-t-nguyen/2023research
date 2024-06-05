@@ -1,41 +1,26 @@
-from firsthittingtime import fht1cc
 import numpy as np
-from matplotlib import pyplot as plt
-from scipy.interpolate import interp1d
-from scipy.integrate import solve_ivp
-import multiprocessing
-import inspect
-import csv
+import matplotlib.pyplot as plt
+from diffeq import fhtlambda1, fhtlambda2, solve_diffeq_2cc
 
-def dh_dt_zerodriver(t, h):
-    return -2 / h
+# Define the differential equation dy/dt = -2/y - x
+def dydt(y, x):
+    return np.where(y > np.sqrt(x), -2/(y - x ** x), np.nan)
 
-t = 6.25
-steps = 100
-dt = t / steps
-t_span = [0, t]
-t_eval = np.arange(0, t + dt, dt)
+# Define the range of y and t values
+y = np.linspace(0.1, 5, 20)
+x = np.linspace(0, 5, 20)
 
-h0 = 5
+# Create a meshgrid for y and t
+Y, X = np.meshgrid(y, x)
 
-sol = solve_ivp(dh_dt_zerodriver, t_span=t_span, y0=[h0], t_eval=t_eval)
-interp = interp1d(t_eval, sol.y[0])
-print(interp(6.25))
-print(len(t_eval))
-print(sol.y[0])
+# Calculate the direction field
+DYDT = dydt(Y, X)
 
-plt.figure(figsize=(8, 6), dpi=400)
-
-zerodriver = lambda t: 0 * t
-
-solinterp = interp1d(t_eval, sol.y[0])
-fhtv, fhtl = fht1cc(solinterp, zerodriver, t, dt)
-
-plt.plot(t_eval, [solinterp(t) for t in t_eval], color='black')
-plt.plot(t_eval, [zerodriver(t) for t in t_eval], color='gold')
-plt.scatter(fhtv, solinterp(fhtv), color='blue')
-# plt.xlim((fhtv-0.1, fhtv+0.1))
-# plt.ylim((solinterp(fhtv)-1, solinterp(fhtv)+1))
-print(fhtv)
+# Plot the direction field
+plt.figure(figsize=(8, 6))
+plt.quiver(X, Y, np.ones_like(DYDT), DYDT, scale=20)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Direction Field for dy/dt = -2/y - x')
+plt.grid(True)
 plt.show()
-plt.close()

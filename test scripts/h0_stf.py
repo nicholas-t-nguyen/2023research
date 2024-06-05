@@ -1,5 +1,5 @@
-from diffeq import solve_diffeq_2cc
-from firsthittingtime import fht2cc
+from diffeq import solve_diffeq_1cc
+from firsthittingtime import fht1cc
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
@@ -15,15 +15,15 @@ t = 500
 steps = 5000000
 dt = t / steps
 t_eval = np.arange(0, t + dt, dt)
-harr = np.arange(-1, 1.01, 0.01)
+harr = np.arange(2, 2.06, 0.01)
 
 plt.figure(figsize=(8, 6), dpi=400)
 
-lambda1 = lambda t: 2 * np.sqrt(t) + 0.01
+lambda1 = lambda t: 2 * np.sqrt(t) + 1
 lambda2 = lambda t: -2 * np.sqrt(t) - 0.01
 
 def mainfunc(h0):
-    sol = solve_diffeq_2cc(t, steps, h0, lambda1, lambda2)
+    sol = solve_diffeq_1cc(t, steps, h0, lambda1)
     try:
         solinterp = interp1d(t_eval, sol.y[0])
     except:
@@ -31,12 +31,8 @@ def mainfunc(h0):
         return h0, 0, 'red'
 
     try:
-        fhtv, fhtl = fht2cc(solinterp, lambda1, lambda2, t, dt)
-        if fhtl == 1:
-            color = "blue"
-        elif fhtl == 2:
-            color = "orange"
-        print(f"fht={fhtv} and h0={h0}")
+        fhtv = fht1cc(solinterp, lambda1, t, dt)
+        color = "blue"
         return h0, fhtv, color
     except:
         print(f"out of range at h0 = {h0}")
