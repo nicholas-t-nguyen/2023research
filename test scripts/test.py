@@ -1,11 +1,6 @@
 import sys
-from diffeq import solve_diffeq_1cc
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.interpolate import interp1d
+import matplotlib.pyplot as plt, mpld3
 from multiprocessing import Pool, cpu_count
-import inspect
-import csv
 import numpy as np
 from scipy.integrate import solve_ivp
 
@@ -26,14 +21,14 @@ def mainfunc(h0):
     t = 10000000000
     sol = solve_diffeq_1cc(h0, t, lambda1)
     fht = sol.t[-1]
-    return fht
+    return fht, sol
 
-#generating x=h0 y=fht
+#zero driver plots various h0
 if __name__ == "__main__":
-    print(cpu_count())
-    print(sys.executable)
-    print(sys.version)
-    print(sys.version_info)
+    # print(cpu_count())
+    # print(sys.executable)
+    # print(sys.version)
+    # print(sys.version_info)
 
     harr = np.arange(-10, 10.1, 0.1)
     T_values = []
@@ -43,51 +38,68 @@ if __name__ == "__main__":
     pool.close()
     pool.join()
 
+    fhts = [values[0] for values in T_values]
+
     A_values = []
     for i in range(len(harr)):
-        delta = T_values[i] - ((harr[i] ** 2)/4)
+        delta = fhts[i] - ((harr[i] ** 2)/4)
         A_values.append(delta)
 
-    # plt.figure(figsize=(8, 6), dpi=200)
-    # for h, T in zip(harr, T_values):
-    #     if T == 10000000000:
-    #         plt.plot(h, 0, 'o', color='red')
-    #         print(f"{h} failed")
-    #     else:
-    #         plt.plot(h, T, 'o', color='blue')
-    #         print(h)
-    # plt.title("λ(t) = t")
-    # plt.xlabel("h0")
-    # plt.ylabel("fht")
-    # plt.show()
-    # # plt.savefig('1.png')
-    # plt.close()
-    #
-    # # plt.figure(figsize=(8, 6), dpi=200)
-    # # plt.scatter(harr, A_values, color='red')
-    # # plt.title("error between numerical and analytical solutions")
-    # # plt.xlabel("error")
-    # # plt.ylabel("h0")
-    # # plt.show()
-    # # plt.savefig('2.png')
-    # # plt.close()
+    plt.figure(figsize=(8, 6), dpi=200)
+    for h, T in zip(harr, fhts):
+        if T == 10000000000:
+            plt.plot(h, 0, 'o', color='red')
+            print(f"{h} failed")
+        else:
+            plt.plot(h, T, 'o', color='black')
+    plt.xlabel("$h_0$")
+    plt.ylabel("FHT")
+    plt.savefig('paperpics/1a zero-driver fhts.png')
+    plt.close()
+
+    plt.figure(figsize=(8, 6), dpi=200)
+    plt.scatter(harr, A_values, color='black')
+    plt.xlabel("$h_0$")
+    plt.ylabel("Error")
+    plt.savefig('paperpics/1b zero-driver errors.png')
+    plt.close()
+
+    plt.figure(figsize=(8, 6), dpi=200)
+    maxfht = max(fhts)
+
+    t_valuesext = np.arange(0, maxfht * 1.1, 0.00001)
+
+    driver = lambda t: 0 * t
+    i = 0
+    for h0, sol in zip(harr, T_values):
+        fht = sol[0]
+        solution = sol[1]
+        t_values = np.arange(0, fht, 0.00001)
+        plt.plot(solution.t, solution.y[0], color='black')
+        plt.plot(t_valuesext, [driver(t) for t in t_valuesext], color='#CFB87C')
+        i += 1
+        print(i)
+
+    plt.xlabel("time")
+    plt.ylabel("y")
+    plt.savefig('paperpics/1c zero-driver drivers + sols.png')
 
     #OR
 
-    fig, axs = plt.subplots(2, figsize=(8, 12), dpi=400)
-
-    # Plotting the first subplot with harr and T_values
-    axs[0].plot(harr, T_values, 'o', color='blue')
-    axs[0].set_title("λ(t) = 0")
-    axs[0].set_xlabel("h0")
-    axs[0].set_ylabel("fht")
-
-    # Plotting the second subplot with harr and A_values
-    axs[1].scatter(harr, A_values, color='red')
-    axs[1].set_title("error between numerical and analytical solution for each h0")
-    axs[1].set_xlabel("harr")
-    axs[1].set_ylabel("A_values")
-
-    plt.tight_layout()
-    plt.show()
-    plt.close()
+    # fig, axs = plt.subplots(2, figsize=(8, 12), dpi=400)
+    #
+    # # Plotting the first subplot with harr and T_values
+    # axs[0].plot(harr, T_values, 'o', color='blue')
+    # axs[0].set_title("λ(t) = 0")
+    # axs[0].set_xlabel("h0")
+    # axs[0].set_ylabel("fht")
+    #
+    # # Plotting the second subplot with harr and A_values
+    # axs[1].scatter(harr, A_values, color='red')
+    # axs[1].set_title("error between numerical and analytical solution for each h0")
+    # axs[1].set_xlabel("harr")
+    # axs[1].set_ylabel("A_values")
+    #
+    # plt.tight_layout()
+    # plt.safefig("1. ")
+    # plt.close()
